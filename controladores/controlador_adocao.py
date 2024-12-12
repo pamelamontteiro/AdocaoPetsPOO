@@ -1,22 +1,27 @@
+
 from datetime import date, datetime
 from uuid import uuid4
-
 from entidades.adocao import Adocao
 from limite.tela_adocao import TelaAdocao
+from persistencia.adocao_dao import AdocaoDAO
 
 
 class ControladorAdocao:
     def __init__(self, controlador_sistemas):
         self.__controlador_sistemas = controlador_sistemas
-        self.__adocao = []  # Lista para armazenar adoções
+        self.__adocao_dao = AdocaoDAO()
         self.__tela_adocao = TelaAdocao()  # Objeto da tela de adoção
 
     @property
     def adocao(self):
-        return self.__adocao
+        return self.__adocao_dao.get_all()
+
+    @property
+    def adocao_dao(self):
+        return self.__adocao_dao
 
     def pega_adocao_por_id(self, codigo: int):
-        for adocao in self.__adocao:
+        for adocao in self.__adocao_dao.get_all():
             if adocao.id_registro == codigo:
                 return adocao
         return None
@@ -139,7 +144,7 @@ class ControladorAdocao:
                 data = date.today()
                 adocao = Adocao(data, gato, adotante, False)
                 id_registro = adocao.id_registro
-                self.__adocao.append(adocao)
+                self.__adocao_dao.add(adocao)
                 # Coleta a assinatura do termo de responsabilidade
                 self.assinar_termo_assinado(id_registro)
                 self.__controlador_sistemas.controlador_gatos.gatos.remove(gato)
@@ -179,11 +184,15 @@ class ControladorAdocao:
                 self.verifica_se_nao_doou(adotante)
                 # Cria o Registro de Adocao
                 data_de_doacao = date.today()
-                adocao = Adocao(data_de_doacao, cachorro, adotante, False)
+                adocao = Adocao(
+                    data_de_doacao,
+                    cachorro,
+                    adotante,
+                    dados_adocao["termo_responsabilidade"],
+                )
                 id_registro = adocao.id_registro
-                self.__adocao.append(adocao)
+                self.__adocao_dao.add(adocao)
                 # Coleta a assinatura do termo de responsabilidade
-                self.assinar_termo_assinado(id_registro)
                 self.__controlador_sistemas.controlador_cachorro.cachorros.remove(
                     cachorro
                 )  # Remove o animal da lista de animais disponíveis
@@ -191,14 +200,22 @@ class ControladorAdocao:
                     f"Inclusão de adoção realizada com sucesso."
                 )
             except Exception as err:
-                print(err)
                 self.__tela_adocao.mensagem(
                     "ERRO: Os dados que você forneceu estão incorretos."
                 )
 
     def listar_adocao(self):
-        self.__tela_adocao.exibir_adocoes(self.__adocao)
-
+        adocao_list = [
+            [
+                adocao.id_registro,
+                adocao.data_adocao.strftime("%d/%m/%Y"),
+                adocao.adotante.nome,
+                adocao.animal.numero_chip,
+                "Sim" if adocao.termo_assinado else "Não",
+            ]
+            for adocao in self.__adocao_dao.get_all()
+        ]
+        self.__tela_adocao.exibir_adocoes(adocao_list)
 
     def excluir_adocao(self):
         id_adocao = self.__tela_adocao.seleciona_adocao()
@@ -206,7 +223,7 @@ class ControladorAdocao:
             adocao = self.pega_adocao_por_id(id_adocao)
             if adocao is None:
                 raise Exception
-            self.__adocao.remove(adocao)
+            self.__adocao_dao.remove(adocao)
             self.__tela_adocao.mensagem(
                 f"Registro de adoção com ID {id_adocao} removido com sucesso."
             )
@@ -227,9 +244,7 @@ class ControladorAdocao:
         while True:
             opcao_escolhida = self.__tela_adocao.abre_tela()
             while opcao_escolhida not in (1, 2, 3, 0):
-                self.__tela_adocao.mensagem(
-                    "ERRO: Opção inválida, tente novamente."
-                )
+                self.__tela_adocao.mensagem("ERRO: Opção inválida, tente novamente.")
                 opcao_escolhida = self.__tela_adocao.abre_tela()
             funcao_escolhida = lista_opcoes[opcao_escolhida]
             funcao_escolhida()

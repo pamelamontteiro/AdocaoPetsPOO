@@ -1,3 +1,4 @@
+
 from limite.tela_sistema import TelaSistema
 
 from .controlador_adocao import ControladorAdocao
@@ -6,10 +7,9 @@ from .controlador_cachorro import ControladorCachorros
 from .controlador_doacao import ControladorDoacao
 from .controlador_doador import ControladorDoadores
 from .controlador_gatos import ControladorGatos
-from .controlador_tipo_habitacao import ControladorTipoHabitacao
+from .controlador_relatorios import ControladorRelatorio
 from .controlador_vacina import ControladorVacinas
 from .controlador_vacinacao import ControladorVacinacao
-from .controlador_relatorios import ControladorRelatorio
 
 
 class ControladorSistema:
@@ -19,7 +19,6 @@ class ControladorSistema:
         self.__controlador_doador = ControladorDoadores(self)
         self.__controlador_gatos = ControladorGatos(self)
         self.__controlador_cachorro = ControladorCachorros(self)
-        self.__controlador_tipo_habitacao = ControladorTipoHabitacao(self)
         self.__controlador_adocao = ControladorAdocao(self)
         self.__controlador_doacao = ControladorDoacao(self)
         self.__controlador_vacinacao = ControladorVacinacao(self)
@@ -116,9 +115,7 @@ class ControladorSistema:
         while True:
             opcao_escolhida = self.__tela_sistema.abre_tela()
             while opcao_escolhida not in (1, 2, 3, 4, 5, 6, 7, 8, 0):
-                self.__tela_sistema.mostra_mensagem(
-                    "ERRO: Opção inválida, tente novamente."
-                )
-                opcao_escolhida = self.__tela_sistema.tela_opcoes()
+                self.__tela_sistema.mensagem("ERRO: Opção inválida, tente novamente.")
+                opcao_escolhida = self.__tela_sistema.abre_tela()
             funcao_escolhida = lista_opcoes[opcao_escolhida]
             funcao_escolhida()
