@@ -1,24 +1,29 @@
-from uuid import uuid4
 
+from typing import List
+from uuid import uuid4
 from entidades.gato import Gato
 from limite.tela_gatos import TelaGato
-from typing import List
+from persistencia.gato_dao import GatosDAO
 
 
 class ControladorGatos:
     __RACAS = ["Siamês", "Persa", "Ragdoll", "Sphynx", "Vira-lata", "Munchkin"]
 
     def __init__(self, controlador_sistemas):
-        self.__gatos: List[Gato] = []
+        self.__gato_dao = GatosDAO()
         self.__tela_gatos = TelaGato()
         self.__controlador_sistemas = controlador_sistemas
 
     @property
     def gatos(self):
-        return self.__gatos
+        return self.__gato_dao.get_all()
+
+    @property
+    def gato_dao(self):
+        return self.__gato_dao
 
     def pega_gato_por_numero_chip(self, numero_chip: int):
-        for gato in self.__gatos:
+        for gato in self.__gato_dao.get_all():
             if gato.numero_chip == numero_chip:
                 return gato
         return None
@@ -27,13 +32,25 @@ class ControladorGatos:
         dados_gato = self.__tela_gatos.pega_dados_gato(tuple(self.__RACAS))
         numero_chip = int(str(uuid4().int)[:4])
         gato = Gato(numero_chip, dados_gato["nome"], dados_gato["raca"])
-        self.__gatos.append(gato)
+        self.__gato_dao.add(gato)
         self.__tela_gatos.mensagem("Animal cadastrado com sucesso no Sistema.")
 
-    def listar_gatos(self):
-        tam_lista_gatos = len(self.__gatos)
-        if tam_lista_gatos > 0:
-            gatos_list = [[gato.numero_chip, gato.nome, gato.raca, gato.listar_vacinacao()] for gato in self.__gatos]
+    def listar_gatos(self, filtro=None):
+        lista_gatos: List[Gato] = self.__gato_dao.get_all()
+        if filtro is not None:
+            lista_gatos = [
+                gato for gato in lista_gatos if gato.numero_chip not in filtro
+            ]
+        if len(lista_gatos) > 0:
+            gatos_list = [
+                [
+                    gato.numero_chip,
+                    gato.nome,
+                    gato.raca,
+                    ", ".join(gato.listar_vacinacao()),
+                ]
+                for gato in lista_gatos
+            ]
             self.__tela_gatos.mostrar_gatos(gatos_list)
         else:
             self.__tela_gatos.mensagem(
@@ -50,16 +67,13 @@ class ControladorGatos:
             if gato_para_atualizar is None:
                 raise Exception
 
-            novos_dados_gato = self.__tela_gatos.mostra_gato(gato_para_atualizar, tuple(self.__RACAS))
+            novos_dados_gato = self.__tela_gatos.mostra_gato(
+                gato_para_atualizar, tuple(self.__RACAS)
+            )
             gato_para_atualizar.nome = novos_dados_gato["nome"]
             gato_para_atualizar.raca = novos_dados_gato["raca"]
-            self.__gatos = [
-                gato_para_atualizar if gato.numero_chip == numero_chip else gato
-                for gato in self.__gatos
-            ]
-            self.__tela_gatos.mensagem(
-                "Dados do gato alterados com sucesso."
-            )
+            self.__gato_dao.update(gato_para_atualizar)
+            self.__tela_gatos.mensagem("Dados do gato alterados com sucesso.")
 
         except Exception:
             self.__tela_gatos.mensagem("ERRO: O gato não existe.")
@@ -73,11 +87,11 @@ class ControladorGatos:
             if gato is None:
                 raise Exception
 
-            self.__gatos.remove(gato)
+            self.__gato_dao.remove(gato)
             self.__tela_gatos.mensagem(
                 f"O gato de numero chip: {numero_chip} foi excluido do sistema"
             )
-            if len(self.__gatos) == 0:
+            if len(self.__gato_dao.get_all()) == 0:
                 self.__tela_gatos.mensagem(
                     "Não existe mais nenhum gato cadastrado no sistema"
                 )
@@ -102,9 +116,7 @@ class ControladorGatos:
         while True:
             opcao_escolhida = self.__tela_gatos.abre_tela()
             while opcao_escolhida not in (1, 2, 3, 4, 0):
-                self.__tela_gatos.mensagem(
-                    "ERRO: Opção inválida, tente novamente."
-                )
+                self.__tela_gatos.mensagem("ERRO: Opção inválida, tente novamente.")
                 opcao_escolhida = self.__tela_gatos.abre_tela()
             funcao_escolhida = lista_opcoes[opcao_escolhida]
             funcao_escolhida()
