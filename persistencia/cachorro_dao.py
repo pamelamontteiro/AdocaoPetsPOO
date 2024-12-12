@@ -1,5 +1,5 @@
-from persistencia.dao import DAO
 from entidades.cachorro import Cachorro
+from persistencia.dao import DAO
 
 
 class CachorrosDAO(DAO):
@@ -8,11 +8,11 @@ class CachorrosDAO(DAO):
 
     def add(self, cachorros: Cachorro):
         if isinstance(cachorros, Cachorro):
-            super().add(cachorros.numero_chip, Cachorro)
+            super().add(cachorros.numero_chip, cachorros)
 
     def update(self, cachorros: Cachorro):
         if isinstance(cachorros, Cachorro):
-            super().update(cachorros.numero_chip, Cachorro)
+            super().update(cachorros.numero_chip, cachorros)
 
     def remove(self, key: int):
         super().remove(key)

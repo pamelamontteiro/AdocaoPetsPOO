@@ -1,24 +1,29 @@
+from typing import List
 from uuid import uuid4
 
 from entidades.cachorro import Cachorro
 from limite.tela_cachorro import TelaCachorro
-from typing import List
+from persistencia.cachorro_dao import CachorrosDAO
 
 
 class ControladorCachorros:
     __RACAS = ["Pastor alemão", "Buldogue", "Zwergspitz", "Shih Tzu", "Vira-lata"]
 
     def __init__(self, controlador_sistemas):
-        self.__cachorros: List[Cachorro] = []
+        self.__cachorro_dao = CachorrosDAO()
         self.__tela_cachorro = TelaCachorro()
         self.__controlador_sistemas = controlador_sistemas
 
     @property
     def cachorros(self):
-        return self.__cachorros
+        return self.__cachorro_dao.get_all()
+
+    @property
+    def cachorro_dao(self):
+        return self.__cachorro_dao
 
     def pega_cachorro_por_numero_chip(self, numero_chip: int):
-        for cachorro in self.__cachorros:
+        for cachorro in self.__cachorro_dao.get_all():
             if cachorro.numero_chip == numero_chip:
                 return cachorro
         return None
@@ -32,17 +37,28 @@ class ControladorCachorros:
             dados_cachorro["raca"],
             dados_cachorro["tamanho"],
         )
-        self.__cachorros.append(cachorro)
-        self.__tela_cachorro.mensagem(
-            "Animal cadastrado com sucesso no Sistema."
-        )
+        self.__cachorro_dao.add(cachorro)
+        self.__tela_cachorro.mensagem("Animal cadastrado com sucesso no Sistema.")
 
-    def listar_cachorros(self):
-        tam_lista_cachorros = len(self.__cachorros)
+    def listar_cachorros(self, filtro=None):
+        tam_lista_cachorros = len(self.__cachorro_dao.get_all())
+        lista_cachorro = self.__cachorro_dao.get_all()
+        if filtro is not None:
+            lista_cachorro = [
+                cachorro
+                for cachorro in lista_cachorro
+                if cachorro.numero_chip not in filtro
+            ]
         if tam_lista_cachorros > 0:
             cachorros_list = [
-                [cachorro.numero_chip, cachorro.nome, cachorro.raca, cachorro.tamanho, cachorro.listar_vacinacao()]
-                for cachorro in self.__cachorros
+                [
+                    cachorro.numero_chip,
+                    cachorro.nome,
+                    cachorro.raca,
+                    cachorro.tamanho,
+                    ", ".join(cachorro.listar_vacinacao()),
+                ]
+                for cachorro in lista_cachorro
             ]
             self.__tela_cachorro.mostrar_cachorros(cachorros_list)
         else:
@@ -60,24 +76,15 @@ class ControladorCachorros:
             if cachorro_para_atualizar is None:
                 raise Exception
 
-            novos_dados_cachorro = self.__tela_cachorro.mostra_cachorro(cachorro_para_atualizar, 
-                self.__RACAS
+            novos_dados_cachorro = self.__tela_cachorro.mostra_cachorro(
+                cachorro_para_atualizar, self.__RACAS
             )
             cachorro_para_atualizar.nome = novos_dados_cachorro["nome"]
             cachorro_para_atualizar.raca = novos_dados_cachorro["raca"]
             cachorro_para_atualizar.tamanho = novos_dados_cachorro["tamanho"]
-            self.__cachorros = [
-                (
-                    cachorro_para_atualizar
-                    if cachorro.numero_chip == numero_chip
-                    else cachorro
-                )
-                for cachorro in self.__cachorros
-            ]
+            self.__cachorro_dao.update(cachorro_para_atualizar)
 
-            self.__tela_cachorro.mensagem(
-                "Dados do cachorro alterados com sucesso."
-            )
+            self.__tela_cachorro.mensagem("Dados do cachorro alterados com sucesso.")
 
         except Exception:
             self.__tela_cachorro.mensagem("ERRO: O cachorro não existe.")
@@ -90,13 +97,12 @@ class ControladorCachorros:
             cachorro = self.pega_cachorro_por_numero_chip(numero_chip)
             if cachorro is None:
                 return Exception
-            
 
-            self.__cachorros.remove(cachorro)
+            self.__cachorro_dao.remove(cachorro)
             self.__tela_cachorro.mensagem(
                 f"O cachorro de numero chip: {numero_chip} foi excluido do sistema"
             )
-            if len(self.__cachorros) == 0:
+            if len(self.__cachorro_dao.get_all()) == 0:
                 self.__tela_cachorro.mensagem(
                     "Não existe mais nenhum cachorro cadastrado no sistema"
                 )
@@ -121,9 +127,7 @@ class ControladorCachorros:
         while True:
             opcao_escolhida = self.__tela_cachorro.abre_tela()
             while opcao_escolhida not in (1, 2, 3, 4, 0):
-                self.__tela_cachorro.mensagem(
-                    "ERRO: Opção inválida, tente novamente."
-                )
+                self.__tela_cachorro.mensagem("ERRO: Opção inválida, tente novamente.")
                 opcao_escolhida = self.__tela_cachorro.tela_opcoes()
             funcao_escolhida = lista_opcoes[opcao_escolhida]
             funcao_escolhida()
