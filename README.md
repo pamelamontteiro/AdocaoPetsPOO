@@ -1,6 +1,6 @@
 
 <p align="center">
- <img style="border-radius: 70%;" src="Documentacao/2.png" width="100px;" alt=""/>
+ <img style="border-radius: 70%;" src="Documentacao/img/2.png" width="100px;" alt=""/>
 </p> 
 
 <p align="center"> ONG ADOTEPET - Adoção de animais</p>
@@ -43,7 +43,7 @@ Esse formato apresenta a descrição de forma mais clara e organizada, destacand
 
 <div align="center">
     <div style="display: flex; align-items: center;">
-        <img src="Documentacao/Aplicação.gif">
+        <img src="Documentacao/img/Aplicação.gif">
     </div>
 </div>
 
@@ -74,7 +74,7 @@ Exemplo de Persistências: Gato
 
 <div align="center">
     <div style="display: flex; align-items: center;">
-        <img src="Documentacao/Persistencia_do_gato.gif">
+        <img src="Documentacao/img/Persistencia_do_gato.gif">
     </div>
 </div>
 
@@ -137,7 +137,7 @@ Esta seção detalha como a aplicação foi modelada para atender às necessidad
 
 A modelagem foi feita em UML para compreender melhor o funcionamento das classes e suas heranças.
 
-<img width="100%" src="Documentacao/Diagrama_UML_INE5605.jpg" />
+<img width="100%" src="Documentacao/UML_final.png" />
 
 <br>
 
