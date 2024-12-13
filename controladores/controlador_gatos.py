@@ -1,6 +1,6 @@
-
 from typing import List
 from uuid import uuid4
+
 from entidades.gato import Gato
 from limite.tela_gatos import TelaGato
 from persistencia.gato_dao import GatosDAO
@@ -87,7 +87,7 @@ class ControladorGatos:
             if gato is None:
                 raise Exception
 
-            self.__gato_dao.remove(gato)
+            self.__gato_dao.remove(gato.numero_chip)
             self.__tela_gatos.mensagem(
                 f"O gato de numero chip: {numero_chip} foi excluido do sistema"
             )

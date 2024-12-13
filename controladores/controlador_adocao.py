@@ -1,6 +1,7 @@
 
 from datetime import date, datetime
 from uuid import uuid4
+
 from entidades.adocao import Adocao
 from limite.tela_adocao import TelaAdocao
 from persistencia.adocao_dao import AdocaoDAO
@@ -223,7 +224,7 @@ class ControladorAdocao:
             adocao = self.pega_adocao_por_id(id_adocao)
             if adocao is None:
                 raise Exception
-            self.__adocao_dao.remove(adocao)
+            self.__adocao_dao.remove(adocao.id_registro)
             self.__tela_adocao.mensagem(
                 f"Registro de adoção com ID {id_adocao} removido com sucesso."
             )

@@ -75,7 +75,7 @@ class ControladorDoadores:
             novos_dados_adotante = self.__tela_doador.mostra_doador(doador)
             doador.nome = novos_dados_adotante["nome"]
             doador.cpf = novos_dados_adotante["cpf"]
-            doador.nascimento = novos_dados_adotante["data_nascimento"]
+            doador.data_nascimento = datetime.strptime(novos_dados_adotante["data_nascimento"], "%d/%m/%Y").date()
             doador.endereco = novos_dados_adotante["endereco"]
             self.__doador_dao.update(doador)
             self.__tela_doador.mensagem("Dados do Doador alterados com sucesso.")
@@ -90,7 +90,7 @@ class ControladorDoadores:
                 raise Exception
 
             # Se o doador existe, remove da lista e confirma a exclusão
-            self.__doador_dao.remove(doador)
+            self.__doador_dao.remove(doador.cpf)
             self.__tela_doador.mensagem(
                 f"Adotante de cpf: {cpf_doador} foi excluido do sistema."
             )

@@ -1,4 +1,3 @@
-
 from uuid import uuid4
 
 from entidades.vacina import Vacina
@@ -31,5 +30,5 @@ class ControladorVacinas:
         for vacinacao in vacinacoes:
             if vacinacao.vacina == vacina:
                 self.__controlador_sistemas.controlador_vacinacao.vacinacao_dao.remove(
-                    vacinacao
+                    vacinacao.vacina
                 )

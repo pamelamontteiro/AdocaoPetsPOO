@@ -1,4 +1,3 @@
-
 import PySimpleGUI as sg
 from exception.CPFException import CPFException
 from exception.NomeException import NomeException
@@ -253,7 +252,7 @@ class TelaDoador:
             [
                 sg.Input(
                     key="data_nascimento",
-                    default_text=doador.data_nascimento,
+                    default_text=doador.data_nascimento.strftime("%d/%m/%Y"),
                     font=self.__font,
                     background_color="white",
                     enable_events=True

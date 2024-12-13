@@ -1,3 +1,4 @@
+
 from typing import List
 from uuid import uuid4
 
@@ -98,7 +99,7 @@ class ControladorCachorros:
             if cachorro is None:
                 return Exception
 
-            self.__cachorro_dao.remove(cachorro)
+            self.__cachorro_dao.remove(cachorro.numero_chip)
             self.__tela_cachorro.mensagem(
                 f"O cachorro de numero chip: {numero_chip} foi excluido do sistema"
             )

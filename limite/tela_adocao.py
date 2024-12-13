@@ -1,5 +1,5 @@
-
 import PySimpleGUI as sg
+
 from exception.CPFException import CPFException
 from utils import verifica_cpf
 
@@ -142,7 +142,7 @@ class TelaAdocao:
         if button in (None, "Retornar"):
             return None
 
-        return int(values["id"])
+        return values["id"]
 
     def exibir_adocoes(self, adocoes):
         sg.theme("dark purple 5")

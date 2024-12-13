@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 from entidades.cachorro import Cachorro
@@ -35,7 +34,7 @@ class ControladorRelatorio:
                 if isinstance(adocao.animal, Gato)
             ]
             gatos_list = [
-                [gato.nome, gato.raca, gato.numero_chip] for gato in gatos_adocao
+                [adocao.animal.nome, adocao.animal.raca, adocao.animal.numero_chip] for adocao in gatos_adocao
             ]
             if len(gatos_adocao) > 0:
                 self.__tela_relatorio.mostra_animal(gatos_list)
@@ -52,12 +51,12 @@ class ControladorRelatorio:
             if len(cachorros_adocao) > 0:
                 cachorros_list = [
                     [
-                        cachorro.nome,
-                        cachorro.raca,
-                        cachorro.tamanho,
-                        cachorro.numero_chip,
+                        adocao.animal.nome,
+                        adocao.animal.raca,
+                        adocao.animal.tamanho,
+                        adocao.animal.numero_chip,
                     ]
-                    for cachorro in cachorros_adocao
+                    for adocao in cachorros_adocao
                 ]
                 self.__tela_relatorio.mostra_animal(cachorros_list)
             else:

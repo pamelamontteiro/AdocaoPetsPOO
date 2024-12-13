@@ -1,5 +1,5 @@
-
 import PySimpleGUI as sg
+
 from exception.CPFException import CPFException
 from utils import verifica_cpf
 
@@ -141,6 +141,32 @@ class TelaDoacao:
         self.close()
         if button in (None, "Retornar"):
             return
+        
+    def seleciona_doacao(self):
+        sg.theme("dark purple 5")
+        layout = [
+            [sg.Text("ID do registro", font=self.__font)],
+            [sg.Input(key="id", font=self.__font, background_color="white")],
+            [
+                sg.Push(),
+                sg.Button(
+                    "Retornar", button_color=("black", "white"), font=self.__font
+                ),
+                sg.Push(),
+                sg.Button(
+                    "Confirmar", button_color=("black", "white"), font=self.__font
+                ),
+            ],
+        ]
+        self.__window = sg.Window("Selecionar doação pelo ID", layout, finalize=True)
+        self.__window.set_min_size((300, 200))
+
+        button, values = self.open()
+        self.close()
+        if button in (None, "Retornar"):
+            return None
+        
+        return values["id"]
 
     def mensagem(self, mensagem: str):
         sg.Popup("", mensagem, font=self.__font)

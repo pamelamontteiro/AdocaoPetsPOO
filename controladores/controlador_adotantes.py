@@ -92,7 +92,7 @@ class ControladorAdotantes:
 
             novos_dados_adotante = self.__tela_adotante.mostra_adotante(adotante)
             adotante.nome = novos_dados_adotante["nome"]
-            adotante.data_nascimento = novos_dados_adotante["data_nascimento"]
+            adotante.data_nascimento = datetime.strptime(novos_dados_adotante["data_nascimento"], "%d/%m/%Y").date()
             adotante.endereco = novos_dados_adotante["endereco"]
             adotante.tem_outros_animais = novos_dados_adotante["tem_outros_animais"]
             adotante.tipo_habitacao = novos_dados_adotante["tipo_habitacao"]
@@ -112,7 +112,7 @@ class ControladorAdotantes:
             adotante = self.pega_adotante_por_cpf(cpf_para_excluir)
             if adotante is None:
                 raise Exception
-            self.__adotante_dao.remove(adotante)
+            self.__adotante_dao.remove(adotante.cpf)
             self.__tela_adotante.mostra_mensagem(
                 f"Adotante de cpf: {cpf_para_excluir} foi excluido do sistema."
             )

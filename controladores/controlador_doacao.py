@@ -155,7 +155,7 @@ class ControladorDoacao:
             if doacao is None:
                 raise Exception
 
-            self.__doacao_dao.remove(doacao)
+            self.__doacao_dao.remove(doacao.id_registro)
             self.__tela_doacao.mensagem(
                 f"Doação com ID {id_registro_doacao} removido com sucesso."
             )

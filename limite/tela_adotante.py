@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 import PySimpleGUI as sg
@@ -297,7 +296,7 @@ class TelaAdotante:
             [
                 sg.Input(
                     key="data_nascimento",
-                    default_text=adotante.data_nascimento,
+                    default_text=adotante.data_nascimento.strftime("%d/%m/%Y"),
                     font=self.__font,
                     background_color="white",
                     enable_events=True,
@@ -467,6 +466,8 @@ class TelaAdotante:
         endereco = values["endereco"]
         tipo_habitacao = values["tipo_habitacao"]
         tem_outros_animais = "S" if values["S"] else "N"
+
+        print(data_nascimento)
 
         return {
             "cpf": cpf,
